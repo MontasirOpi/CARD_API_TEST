@@ -1,4 +1,6 @@
 import 'package:card_app/models/product.dart';
+import 'package:card_app/screens/delete_product.dart';
+import 'package:card_app/screens/edit_product.dart';
 
 
 import 'package:flutter/material.dart';
@@ -15,6 +17,8 @@ class ProductItem extends StatefulWidget {
 }
 
 class _productItemState extends State<ProductItem> {
+  get product => null;
+
   
   @override
   Widget build(BuildContext context) {
@@ -34,14 +38,20 @@ class _productItemState extends State<ProductItem> {
             children: [
               TextButton.icon(
                 onPressed: () {
-                  
-                },
+                    Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => EditProductScreen(product: product),
+                    ),
+                  );
+         
+              },
                 icon: const Icon(Icons.edit),
                 label: const Text('Edit'),
               ),
              TextButton.icon(
                 onPressed: () {
-               // Pass the product ID
+                 deleteProduct(context, product.id);
                 },
                 icon: const Icon(Icons.delete_outline),
                 label: const Text(
