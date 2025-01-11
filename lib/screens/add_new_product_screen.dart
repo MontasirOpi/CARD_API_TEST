@@ -78,17 +78,33 @@ class _AddNewProductScreenState extends State<AddNewProductScreen> {
           const SizedBox(height: 24),
           _inProgress
               ? const Center(child: CircularProgressIndicator())
-              : ElevatedButton.icon(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.teal,
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8)),
+              : Center(
+                child: ElevatedButton.icon(
+                    style: ElevatedButton.styleFrom(
+                      foregroundColor: Colors.white,
+                      backgroundColor: Colors.teal, // Icon and text color
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 16, horizontal: 32), // Increased padding
+                      shape: RoundedRectangleBorder(
+                          borderRadius:
+                              BorderRadius.circular(12)), // Rounded corners
+                      elevation: 5, // Subtle shadow to make the button stand out
+                    ),
+                    onPressed: _onTapAppProductButton,
+                    icon: const Icon(
+                      Icons.add,
+                      color: Colors.white, // White icon for contrast
+                    ),
+                    label: const Text(
+                      "Add Product",
+                      style: TextStyle(
+                        color: Colors.white, // White text for contrast
+                        fontSize: 16, // Larger font size for readability
+                        fontWeight: FontWeight.bold, // Bold text for emphasis
+                      ),
+                    ),
                   ),
-                  onPressed: _onTapAppProductButton,
-                  icon: const Icon(Icons.add),
-                  label: const Text("Add Product"),
-                ),
+              )
         ],
       ),
     );

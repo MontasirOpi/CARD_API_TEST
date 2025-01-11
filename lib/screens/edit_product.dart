@@ -43,7 +43,8 @@ class _EditProductScreenState extends State<EditProductScreen> {
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Card(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
           elevation: 4,
           child: Padding(
             padding: const EdgeInsets.all(16.0),
@@ -63,28 +64,50 @@ class _EditProductScreenState extends State<EditProductScreen> {
                   const SizedBox(height: 16),
                   _buildTextField("Product Name", _productNameController),
                   const SizedBox(height: 16),
-                  _buildTextField("Unit Price", _unitPriceController, keyboardType: TextInputType.number),
+                  _buildTextField("Unit Price", _unitPriceController,
+                      keyboardType: TextInputType.number),
                   const SizedBox(height: 16),
-                  _buildTextField("Quantity", _quantityController, keyboardType: TextInputType.number),
+                  _buildTextField("Quantity", _quantityController,
+                      keyboardType: TextInputType.number),
                   const SizedBox(height: 16),
-                  _buildTextField("Total Price", _totalPriceController, keyboardType: TextInputType.number),
+                  _buildTextField("Total Price", _totalPriceController,
+                      keyboardType: TextInputType.number),
                   const SizedBox(height: 24),
                   _inProgress
                       ? const Center(child: CircularProgressIndicator())
-                      : ElevatedButton.icon(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.teal,
-                            padding: const EdgeInsets.symmetric(vertical: 16),
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                      : Center(
+                          child: ElevatedButton.icon(
+                            style: ElevatedButton.styleFrom(
+                              foregroundColor: Colors.white,
+                              backgroundColor: Colors.teal, // Icon color
+                              padding: const EdgeInsets.symmetric(
+                                vertical: 16,
+                                horizontal: 32,
+                              ), // Vertical padding and extra horizontal space
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(
+                                      12)), // Rounded corners
+                              elevation: 5, // Slight elevation to make it pop
+                            ),
+                            onPressed: () {
+                              if (_formKey.currentState!.validate()) {
+                                _updateProduct();
+                              }
+                            },
+                            icon: const Icon(Icons.save,
+                                color: Colors.white), // White icon
+                            label: const Text(
+                              "Update Product",
+                              style: TextStyle(
+                                color: Colors.white, // White text for contrast
+                                fontSize:
+                                    16, // Slightly larger font size for readability
+                                fontWeight:
+                                    FontWeight.bold, // Bold text for emphasis
+                              ),
+                            ),
                           ),
-                          onPressed: () {
-                            if (_formKey.currentState!.validate()) {
-                              _updateProduct();
-                            }
-                          },
-                          icon: const Icon(Icons.save),
-                          label: const Text("Update Product"),
-                        ),
+                        )
                 ],
               ),
             ),
@@ -94,7 +117,8 @@ class _EditProductScreenState extends State<EditProductScreen> {
     );
   }
 
-  Widget _buildTextField(String label, TextEditingController controller, {TextInputType keyboardType = TextInputType.text}) {
+  Widget _buildTextField(String label, TextEditingController controller,
+      {TextInputType keyboardType = TextInputType.text}) {
     return TextFormField(
       controller: controller,
       decoration: InputDecoration(
@@ -145,7 +169,9 @@ class _EditProductScreenState extends State<EditProductScreen> {
         Navigator.pop(context); // Go back to the previous screen after update
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to update product: ${response.statusCode}')),
+          SnackBar(
+              content:
+                  Text('Failed to update product: ${response.statusCode}')),
         );
       }
     } catch (e) {
