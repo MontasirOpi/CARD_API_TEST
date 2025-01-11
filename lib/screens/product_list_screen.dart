@@ -1,10 +1,9 @@
 import 'dart:convert';
-
 import 'package:card_app/models/product.dart';
 import 'package:card_app/screens/add_new_product_screen.dart';
 import 'package:card_app/widgets/product_item.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' ;
+import 'package:http/http.dart';
 
 class ProductListScreen extends StatefulWidget {
   const ProductListScreen({super.key});
@@ -16,6 +15,7 @@ class ProductListScreen extends StatefulWidget {
 class _ProductListScreenState extends State<ProductListScreen> {
   List<Product> productList = [];
   bool _inProgress = false;
+
   @override
   void initState() {
     super.initState();
@@ -27,7 +27,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Product List'),
-        backgroundColor: Colors.blue.shade700,
+        backgroundColor: Colors.teal,
         actions: [
           IconButton(
             onPressed: () {
@@ -46,13 +46,18 @@ class _ProductListScreenState extends State<ProductListScreen> {
               child: ListView.separated(
                 itemCount: productList.length,
                 itemBuilder: (context, index) {
-                  return ProductItem(
-                    product: productList[index],
-                   );
-              
-                  
+                  return Card(
+                    elevation: 4,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    shadowColor: Colors.grey.withOpacity(0.3),
+                    child: ProductItem(
+                      product: productList[index],
+                    ),
+                  );
                 },
-                separatorBuilder: ( context,  index) {
+                separatorBuilder: (context, index) {
                   return const SizedBox(height: 16);
                 },
               ),
@@ -67,13 +72,16 @@ class _ProductListScreenState extends State<ProductListScreen> {
           );
         },
         child: const Icon(Icons.add),
+        backgroundColor: Colors.teal,
       ),
     );
   }
 
   Future<void> getProductList() async {
-    _inProgress = true;
-    setState(() {});
+    setState(() {
+      _inProgress = true;
+    });
+
     Uri uri = Uri.parse('http://164.68.107.70:6060/api/v1/ReadProduct');
     Response response = await get(uri);
     print(response.body);
@@ -83,18 +91,21 @@ class _ProductListScreenState extends State<ProductListScreen> {
       Map<String, dynamic> jsonResponse = jsonDecode(response.body);
       for (var item in jsonResponse['data']) {
         Product product = Product(
-            id: item['_id'],
-            productName: item['ProductName']?? '',
-            productCode: item['ProductCode']?? '',
-            productImage: item['Img'] ?? '',
-            unitPrice: item['UnitPrice'] ?? '',
-            quantity: item['Qty'] ?? '',
-            totalPrice: item['TotalPrice'] ?? '',
-            createdAt: item['CreatedDate'] ?? '');
+          id: item['_id'],
+          productName: item['ProductName'] ?? '',
+          productCode: item['ProductCode'] ?? '',
+          productImage: item['Img'] ?? '',
+          unitPrice: item['UnitPrice'] ?? '',
+          quantity: item['Qty'] ?? '',
+          totalPrice: item['TotalPrice'] ?? '',
+          createdAt: item['CreatedDate'] ?? '',
+        );
         productList.add(product);
       }
     }
-    _inProgress = false;
-    setState(() {});
+
+    setState(() {
+      _inProgress = false;
+    });
   }
 }

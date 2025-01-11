@@ -7,9 +7,9 @@ class EditProductScreen extends StatefulWidget {
   final Product product;
 
   const EditProductScreen({
-    Key? key,
+    super.key,
     required this.product,
-  }) : super(key: key);
+  });
 
   @override
   State<EditProductScreen> createState() => _EditProductScreenState();
@@ -38,82 +38,92 @@ class _EditProductScreenState extends State<EditProductScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Edit Product'),
+        backgroundColor: Colors.teal,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            children: [
-              TextFormField(
-                controller: _productNameController,
-                decoration: const InputDecoration(labelText: 'Product Name'),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter a product name';
-                  }
-                  return null;
-                },
-              ),
-              TextFormField(
-                controller: _unitPriceController,
-                decoration: const InputDecoration(labelText: 'Unit Price'),
-                keyboardType: TextInputType.number,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter a unit price';
-                  }
-                  return null;
-                },
-              ),
-              TextFormField(
-                controller: _quantityController,
-                decoration: const InputDecoration(labelText: 'Quantity'),
-                keyboardType: TextInputType.number,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter the quantity';
-                  }
-                  return null;
-                },
-              ),
-              TextFormField(
-                controller: _totalPriceController,
-                decoration: const InputDecoration(labelText: 'Total Price'),
-                keyboardType: TextInputType.number,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter the total price';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 16),
-              _inProgress
-                  ? const CircularProgressIndicator()
-                  : ElevatedButton(
-                      onPressed: () {
-                        if (_formKey.currentState!.validate()) {
-                          _updateProduct();
-                        }
-                      },
-                      child: const Text('Update Product'),
+        child: Card(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          elevation: 4,
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    "Edit Product Details",
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.teal,
                     ),
-            ],
+                  ),
+                  const SizedBox(height: 16),
+                  _buildTextField("Product Name", _productNameController),
+                  const SizedBox(height: 16),
+                  _buildTextField("Unit Price", _unitPriceController, keyboardType: TextInputType.number),
+                  const SizedBox(height: 16),
+                  _buildTextField("Quantity", _quantityController, keyboardType: TextInputType.number),
+                  const SizedBox(height: 16),
+                  _buildTextField("Total Price", _totalPriceController, keyboardType: TextInputType.number),
+                  const SizedBox(height: 24),
+                  _inProgress
+                      ? const Center(child: CircularProgressIndicator())
+                      : ElevatedButton.icon(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.teal,
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                          ),
+                          onPressed: () {
+                            if (_formKey.currentState!.validate()) {
+                              _updateProduct();
+                            }
+                          },
+                          icon: const Icon(Icons.save),
+                          label: const Text("Update Product"),
+                        ),
+                ],
+              ),
+            ),
           ),
         ),
       ),
     );
   }
 
-  // Function to handle updating the product
+  Widget _buildTextField(String label, TextEditingController controller, {TextInputType keyboardType = TextInputType.text}) {
+    return TextFormField(
+      controller: controller,
+      decoration: InputDecoration(
+        labelText: label,
+        hintText: 'Enter $label',
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderSide: const BorderSide(color: Colors.teal, width: 2),
+          borderRadius: BorderRadius.circular(8),
+        ),
+      ),
+      keyboardType: keyboardType,
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Please enter a valid $label';
+        }
+        return null;
+      },
+    );
+  }
+
   Future<void> _updateProduct() async {
     setState(() {
       _inProgress = true;
     });
 
-    Uri uri = Uri.parse(
-        'http://164.68.107.70:6060/api/v1/UpdateProduct');
+    Uri uri = Uri.parse('http://164.68.107.70:6060/api/v1/UpdateProduct');
     Map<String, dynamic> updatedProduct = {
       'ProductName': _productNameController.text,
       'UnitPrice': _unitPriceController.text,

@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 
@@ -20,16 +19,26 @@ class _AddNewProductScreenState extends State<AddNewProductScreen> {
   final TextEditingController _quantityTEController = TextEditingController();
   final GlobalKey<FormState> _fromKey = GlobalKey<FormState>();
   bool _inProgress = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Add New Product'),
+        backgroundColor: Colors.teal,
       ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: _buildNewProductForm(),
+          padding: const EdgeInsets.all(16.0),
+          child: Card(
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            elevation: 4,
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: _buildNewProductForm(),
+            ),
+          ),
         ),
       ),
     );
@@ -39,101 +48,73 @@ class _AddNewProductScreenState extends State<AddNewProductScreen> {
     return Form(
       key: _fromKey,
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          TextFormField(
-            controller: _productNameTEController,
-            decoration: const InputDecoration(
-              hintText: 'Name',
-              labelText: 'Product Name',
+          const Text(
+            "Enter Product Details",
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Colors.teal,
             ),
-            validator: (String? valu) {
-              if (valu == null || valu.isEmpty) {
-                return 'Enter a valid value';
-              }
-              return null;
-            },
           ),
-          TextFormField(
-            controller: _unitePriceTEController,
-            decoration: const InputDecoration(
-              hintText: 'Unit Price',
-              labelText: 'Unit Price',
-            ),
-            validator: (String? valu) {
-              if (valu == null || valu.isEmpty) {
-                return 'Enter a valid value';
-              }
-              return null;
-            },
-          ),
-          TextFormField(
-            controller: _totalPriceTEController,
-            decoration: const InputDecoration(
-              hintText: 'Total price',
-              labelText: 'Total price',
-            ),
-            validator: (String? valu) {
-              if (valu == null || valu.isEmpty) {
-                return 'Enter a valid value';
-              }
-              return null;
-            },
-          ),
-          TextFormField(
-            controller: _imageTEController,
-            decoration: const InputDecoration(
-              hintText: 'Product Image',
-              labelText: 'Product Image',
-            ),
-            validator: (String? valu) {
-              if (valu == null || valu.isEmpty) {
-                return 'Enter a valid value';
-              }
-              return null;
-            },
-          ),
-          TextFormField(
-            controller: _codeTEController,
-            decoration: const InputDecoration(
-              hintText: 'Product Code',
-              labelText: 'Product Code',
-            ),
-            validator: (String? valu) {
-              if (valu == null || valu.isEmpty) {
-                return 'Enter a valid value';
-              }
-              return null;
-            },
-          ),
-          TextFormField(
-            controller: _quantityTEController,
-            decoration: const InputDecoration(
-              hintText: 'Quantity',
-              labelText: 'Quantity',
-            ),
-            validator: (String? valu) {
-              if (valu == null || valu.isEmpty) {
-                return 'Enter a valid value';
-              }
-              return null;
-            },
-          ),
-          const SizedBox(
-            height: 16,
-          ),
+          const SizedBox(height: 16),
+          _buildTextField(
+              "Product Name", "Enter product name", _productNameTEController),
+          const SizedBox(height: 16),
+          _buildTextField(
+              "Unit Price", "Enter unit price", _unitePriceTEController),
+          const SizedBox(height: 16),
+          _buildTextField(
+              "Total Price", "Enter total price", _totalPriceTEController),
+          const SizedBox(height: 16),
+          _buildTextField("Product Image URL", "Enter product image URL",
+              _imageTEController),
+          const SizedBox(height: 16),
+          _buildTextField(
+              "Product Code", "Enter product code", _codeTEController),
+          const SizedBox(height: 16),
+          _buildTextField("Quantity", "Enter quantity", _quantityTEController),
+          const SizedBox(height: 24),
           _inProgress
-              ? Center(
-                  child: CircularProgressIndicator(),
-                )
-              : ElevatedButton(
+              ? const Center(child: CircularProgressIndicator())
+              : ElevatedButton.icon(
                   style: ElevatedButton.styleFrom(
-                    fixedSize: const Size.fromWidth(double.maxFinite),
+                    backgroundColor: Colors.teal,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8)),
                   ),
                   onPressed: _onTapAppProductButton,
-                  child: Text('Add Product'),
+                  icon: const Icon(Icons.add),
+                  label: const Text("Add Product"),
                 ),
         ],
       ),
+    );
+  }
+
+  Widget _buildTextField(
+      String label, String hint, TextEditingController controller) {
+    return TextFormField(
+      controller: controller,
+      decoration: InputDecoration(
+        labelText: label,
+        hintText: hint,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderSide: const BorderSide(color: Colors.teal, width: 2),
+          borderRadius: BorderRadius.circular(8),
+        ),
+      ),
+      validator: (String? value) {
+        if (value == null || value.isEmpty) {
+          return "Please enter a valid $label";
+        }
+        return null;
+      },
     );
   }
 
@@ -156,17 +137,15 @@ class _AddNewProductScreenState extends State<AddNewProductScreen> {
       "TotalPrice": _totalPriceTEController.text,
     };
 
-    Response response = await post(uri,
-        headers: {"Content-Type": "application/json"},
-        body: jsonEncode(requestBody));
-    print(response.statusCode);
-    print(response.body);
+    Response response = await post(
+      uri,
+      headers: {"Content-Type": "application/json"},
+      body: jsonEncode(requestBody),
+    );
     if (response.statusCode == 200) {
       _clearTextFields();
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('New Product added'),
-        ),
+        const SnackBar(content: Text('New Product added')),
       );
     }
     _inProgress = false;

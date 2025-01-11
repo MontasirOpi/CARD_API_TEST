@@ -18,8 +18,8 @@ class _ProductItemState extends State<ProductItem> {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-      tileColor: Colors.white,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      tileColor: Colors.blue.shade100,
       title: Text(widget.product.productName),
       subtitle: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -29,7 +29,9 @@ class _ProductItemState extends State<ProductItem> {
           Text('Quantity: ${widget.product.quantity}'),
           Text('Total Price: \$${widget.product.totalPrice}'),
           const Divider(),
-          OverflowBar(
+          Row(
+            
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               TextButton.icon(
                 onPressed: () {
